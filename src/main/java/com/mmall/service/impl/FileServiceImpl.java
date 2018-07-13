@@ -28,7 +28,7 @@ public class FileServiceImpl implements IFileService{
         logger.info("开始上传文件，上传文件的文件名：{},上传的路径：{},新文件名：{}",fileName,path,uploadFileName);
 
         File fileDir = new File(path);
-        if (fileDir.exists()) {
+        if (!fileDir.exists()) {
             fileDir.setWritable(true);
             fileDir.mkdirs();
         }
