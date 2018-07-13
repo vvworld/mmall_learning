@@ -116,4 +116,56 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <!--Cart selectCartByUserIdProductId(Integer userId, Integer productIs)-->
+  <select id="selectCartByUserIdProductId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"></include>
+    form mmall_cart
+    where
+    user_id = #{userId}
+    and product_id = #{productId}
+  </select>
+  <!--List<Cart> selectCartByUsrId(Integer userId)-->
+  <select id="selectCartByUsrId" parameterType="int" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    form mmall_cart
+    where user_id = #{userId}
+  </select>
+  <!--int selectCartProductCheckedStatusByUserId(Integer userId);-->
+  <select id="selectCartProductCheckedStatusByUserId" parameterType="int" resultType="int">
+    select count(1) from mmall_cart where checked = 0 and user_id = #{userId}
+  </select>
+  <!--int deleteByUserIdProductIds(@Param("userId") Integer userId,@Param("productIdList") List<String> productIdList);-->
+  <delete id="deleteByUserIdProductIds" parameterType="map">
+    DELETE from mmall_cart
+    where user_id = #{userId}
+    <if test="prodcutIdList != null" >
+      and product_id in
+      <foreach item="item" separator="," index="index" close="(" open=")" collection="productIdList">
+        #{item}
+      </foreach>
+    </if>
+  </delete>
+  <!--int checkedOrUncheckedProduct(@Param("userId") Integer userId,@Param("checked") Integer checked,@Param("productId") Integer productId);-->
+  <update id="checkedOrUncheckedProduct" parameterType="map">
+    update mmall_cart
+    set checked = #{checked},
+    update_time = now()
+    where user_id = #{userId}
+    <if test="productId != null" >
+      and product_id = #{productId}
+    </if>
+  </update>
+  <!--int selectCartProductCount(Integer userId);-->
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+    select IFNULL(sum(quantity),0) as count form mmall_cart where user_id = #{userId}
+  </select>
+  <!--List<Cart> selectCheckedCartByUserId(Integer userId);-->
+  <select id="selectCheckedCartByUserId" parameterType="int" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"></include>
+    form mmall_cart
+    where user_id = #{userId} and checked = 1
+  </select>
 </mapper>
